@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "894440702747",
+    "firebase_url": "https://elfahd-d9ee6.firebaseio.com",
+    "project_id": "elfahd-d9ee6",
+    "storage_bucket": "elfahd-d9ee6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:894440702747:android:bb3f148cdfb6866d0449be",
+        "android_client_info": {
+          "package_name": "com.app.elfhad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "894440702747-jqgl9n295parodiohti5cm6lkujvckf0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.elfhad",
+            "certificate_hash": "e9e29babb25185a846bbbf2518cdb88cff62b86a"
+          }
+        },
+        {
+          "client_id": "894440702747-4nga2ujdqrvlohbh0jluip3b9jrl4kj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHcFkZX73LcU-WxlknGsdht62qwGaRlqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "894440702747-4nga2ujdqrvlohbh0jluip3b9jrl4kj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
