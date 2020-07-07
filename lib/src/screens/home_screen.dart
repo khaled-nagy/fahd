@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:elfhad/src/controllers/CategoryController.dart';
 import 'package:elfhad/src/controllers/HomeController.dart';
 import 'package:elfhad/src/widgets/AppBarWidget.dart';
 import 'package:elfhad/src/widgets/HomeCard.dart';
@@ -36,6 +37,7 @@ class HomeView extends StateMVC<HomeScreen> {
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     homeController.getAllSections();
+    CategoryController().getImage("1");
     super.initState();
   }
 
@@ -248,6 +250,29 @@ class HomeView extends StateMVC<HomeScreen> {
                 Container(
                   height: 20,
                 ),
+                
+                StreamBuilder(
+                  stream: CategoryController().getImageStream.stream,
+                    builder: (context , snapshot){
+                    if(snapshot.hasData){
+                      
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            image: DecorationImage(
+                                image: NetworkImage(snapshot.data[0]['Image']),fit: BoxFit.cover)
+                          ),
+                        ),
+                      );
+                      
+                    }else{
+                      return SharedWidget.loading(context);
+                    }
+                    }),
                 StreamBuilder(
                     stream: homeController.getAllSectionsStream.stream,
                     builder: (context, snapshot) {

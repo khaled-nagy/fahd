@@ -3,6 +3,7 @@ import 'package:elfhad/src/controllers/AddsController.dart';
 import 'package:elfhad/src/controllers/CategoryController.dart';
 import 'package:elfhad/src/controllers/UserController.dart';
 import 'package:elfhad/src/controllers/UserLocalStorage.dart';
+import 'package:elfhad/src/data/models/AreaMenu.dart';
 import 'package:elfhad/src/data/models/CityMenu.dart';
 import 'package:elfhad/src/data/models/SectionsModel.dart';
 import 'package:elfhad/src/data/models/SubSectionModel.dart';
@@ -29,9 +30,11 @@ class AddadvertisView extends StateMVC<AddadvertisScreen> {
   AddsController addsController;
 
   CityMenu selectedCityMenu;
+  AreaMenu selectedAreaMenu;
   SubSectionsModel selectedSubCategory;
   SectionsModel selectedCategory;
-  String dropDownTitleCityMenu = "_chose_city".tr();
+//  String dropDownTitleAreaMenu = "_chose_area".tr();
+  String dropDownTitleCityMenu = "_chose_area".tr();
   String dropDownTitleCategory = "_chose_section".tr();
   String dropDownTitleSubCategory = "_chose_subSection".tr();
 
@@ -53,6 +56,7 @@ class AddadvertisView extends StateMVC<AddadvertisScreen> {
   @override
   void initState() {
     addsController.getAllCities();
+    addsController.getAllRegions("2");
     CategoryController().getAllSectionMenuButton();
     CategoryController().getAllSubSectionMenuButton("2");
     super.initState();
@@ -285,7 +289,7 @@ class AddadvertisView extends StateMVC<AddadvertisScreen> {
                               ),
                             );
                           } else {
-                            return SharedWidget.loading(context);
+                            return Container();
                           }
                         }),
 
@@ -356,11 +360,95 @@ class AddadvertisView extends StateMVC<AddadvertisScreen> {
                                   selectedCityMenu = value;
                                   dropDownTitleCityMenu = value.name;
                                   ConstantVarable.cityId = value.id;
+                                  addsController.getAllRegions(ConstantVarable.cityId);
                                 });
                               })
                         ],
                       ),
                     ),
+//
+//                    Container(
+//                      height: 16,
+//                    ),
+//
+//                    StreamBuilder(
+//                      stream: addsController.getAreaStream.stream,
+//                        builder: (context , snapshot){
+//                          if(snapshot.hasData){
+//                            return      Container(
+//                              width: MediaQuery.of(context).size.width / 1.1,
+//                              decoration: BoxDecoration(
+//                                  color: Colors.black,
+//                                  border: Border.all(color: Colors.white),
+//
+//                                  borderRadius: BorderRadius.circular(12)),
+//                              child: Row(
+//                                children: <Widget>[
+//                                  DropdownButton<AreaMenu>(
+//                                      hint: Padding(
+//                                        padding:
+//                                        const EdgeInsets.only(left: 8, right: 8),
+//                                        child: Text(dropDownTitleAreaMenu , style: Theme.of(context).textTheme.caption,),
+//                                      ),
+//                                      underline: Container(),
+//                                      value: selectedAreaMenu,
+//                                      iconSize: 0,
+//                                      icon: Padding(
+//                                        padding: const EdgeInsets.only(right: 0),
+//                                        child: Image.asset(
+//                                          "assets/imgs/arrow_down.png",
+//                                          width: 15,
+//                                          height: 15,
+//                                        ),
+//                                      ),
+//                                      items: addsController.regions
+//                                          .map((AreaMenu areaMenu) {
+//                                        return DropdownMenuItem<AreaMenu>(
+//                                            value: areaMenu,
+//                                            child: Padding(
+//                                              padding: const EdgeInsets.only(
+//                                                  left: 8, right: 8),
+//                                              child: Container(
+//                                                width:
+//                                                MediaQuery.of(context).size.width /
+//                                                    1.5,
+//                                                child: Row(
+//                                                  mainAxisAlignment:
+//                                                  MainAxisAlignment.spaceBetween,
+//                                                  children: <Widget>[
+//                                                    Text(
+//                                                      areaMenu.name,
+//                                                      style: Theme.of(context)
+//                                                          .textTheme
+//                                                          .headline,
+//                                                    ),
+//
+//                                                    Expanded(
+//                                                      child: Container(),
+//                                                    ),
+//
+//                                                    // Image.asset("assets/imgs/arrow_down.png" , width: 20,height: 20,)
+//                                                  ],
+//                                                ),
+//                                              ),
+//                                            ));
+//                                      }).toList(),
+//                                      onChanged: (AreaMenu value) {
+//                                        setState(() {
+//                                          selectedAreaMenu = value;
+//                                          dropDownTitleAreaMenu = value.name;
+//
+//                                        });
+//                                      })
+//                                ],
+//                              ),
+//                            );
+//                          }else{
+//                            return SharedWidget.loading(context);
+//                          }
+//                        }),
+
+
 
                     Container(
                       height: 16,

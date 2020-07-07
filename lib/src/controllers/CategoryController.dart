@@ -22,8 +22,7 @@ class CategoryController extends ControllerMVC {
   static CategoryController get con => _this;
   static final url = ConstantVarable.apiUrl;
 
-  Map<String, dynamic> dataDetails = Map< String , dynamic >();
-
+  Map<String, dynamic> dataDetails = Map<String, dynamic>();
 
   final getSubSectionsStream = StreamController.broadcast();
   void getSubSections(String sectionId) async {
@@ -50,19 +49,18 @@ class CategoryController extends ControllerMVC {
     });
   }
 
-    final getSubSectionsBySectionIdStream = StreamController.broadcast();
-  void getSubSectionsBySectionId(String subSectionId) async {
+  final getSubSectionsBySectionIdStream = StreamController.broadcast();
+  void getSubSectionsBySectionId(String subSectionId, String cityId) async {
     await http
         .get(
-      "${url}GetAllAdsSub.php?Lang=${ConstantVarable.lang}&Subid=$subSectionId",
+      "${url}GetAllAdsSub.php?Lang=${ConstantVarable.lang}&Subid=$subSectionId&City=$cityId",
     )
         .then((response) {
       if (response.statusCode == 200) {
         var jsonValu = jsonDecode(response.body);
-        print(" SubSections by id Response is ::::::::: " + jsonValu.toString());
+        print(
+            " SubSections by id Response is ::::::::: " + jsonValu.toString());
         getSubSectionsBySectionIdStream.sink.add(jsonValu['Ads']);
-
-     
       }
     }, onError: (error) {
       getSubSectionsBySectionIdStream.close();
@@ -97,69 +95,103 @@ class CategoryController extends ControllerMVC {
       print("Could not launch $url");
     }
   }
-final getAllSubSectionMenuStream = StreamController.broadcast();
-    Future<List<SubSectionsModel>> getAllSubSectionMenu (String sectionId ) async {
-      
-      return await http.get(
-      "${url}GetSubSection.php?Spid=$sectionId?Lang=${ConstantVarable.lang}",
-     
-    ).then((response) {
+
+  final getAllSubSectionMenuStream = StreamController.broadcast();
+  Future<List<SubSectionsModel>> getAllSubSectionMenu(String sectionId) async {
+
+    String realUrl = "${url}GetSubSection.php?Spid=$sectionId&Lang=${ConstantVarable.lang}";
+    return await http
+        .get(
+      realUrl,
+    )
+        .then((response) {
       if (response.statusCode == 200) {
+        print("url is : $realUrl");
         var jsonValue = json.decode(response.body);
         print("SubSection is :::: ${jsonValue['SubSections']}");
-       getAllSubSectionMenuStream.sink.add(jsonValue['SubSections']);
+        getAllSubSectionMenuStream.sink.add(jsonValue['SubSections']);
         return (jsonValue['SubSections'] as List)
             .map((f) => new SubSectionsModel.fromJson(f))
             .toList();
       } else
-        return List<SubSectionsModel>();
-    },onError: (err){
+        return ([] as List)
+            .map((f) => new SubSectionsModel.fromJson(f))
+            .toList();
+    }, onError: (err) {
       print("SubSection error is :::: $err");
       getAllSubSectionMenuStream.close();
     });
-
   }
 
-   List<SubSectionsModel> subSectionList = List<SubSectionsModel>();
+  List<SubSectionsModel> subSectionList = List<SubSectionsModel>();
 
-   Future getAllSubSectionMenuButton(String sectionId) async {
+  Future getAllSubSectionMenuButton(String sectionId) async {
+    refresh();
+
+   await getAllSubSectionMenu(sectionId).then((menuList) {
+     if(menuList == null){
+       print("menu list is : $menuList");
+       subSectionList = [SubSectionsModel(
+         id: "0" ,
+         name: "لا توجد اقسام فرعية"
+       )];
+     }else {
+       subSectionList =  menuList;
+       print("menu list is : ${menuList.toString()}");
+     }
+   });
+
+
+
 
 
     refresh();
-    subSectionList = await getAllSubSectionMenu(sectionId);
-    
-    refresh();
-   }
+  }
 
-       Future<List<SectionsModel>> getAllSectionMenu () async {
-      
-      return await http.get(
+  Future<List<SectionsModel>> getAllSectionMenu() async {
+    return await http
+        .get(
       "${url}GetAllSections.php?Lang=${ConstantVarable.lang}",
-     
-    ).then((response) {
+    )
+        .then((response) {
       if (response.statusCode == 200) {
         var jsonValue = json.decode(response.body);
         print("Section is :::: ${jsonValue['Sections']}");
-       
+
         return (jsonValue['Sections'] as List)
             .map((f) => new SectionsModel.fromJson(f))
             .toList();
       } else
         return List<SectionsModel>();
-    },onError: (err){
+    }, onError: (err) {
       print("SubSection error is :::: $err");
     });
-
   }
 
-   List<SectionsModel> sectionList = List<SectionsModel>();
+  List<SectionsModel> sectionList = List<SectionsModel>();
 
-   Future getAllSectionMenuButton() async {
-
-
+  Future getAllSectionMenuButton() async {
     refresh();
     sectionList = await getAllSectionMenu();
-    
+
     refresh();
-   }
+  }
+
+  final getImageStream = StreamController.broadcast();
+  void getImage(String type) async {
+    await http
+        .get(
+      "${url}GetAdsType.php?Type=$type",
+    )
+        .then((response) {
+      if (response.statusCode == 200) {
+        var jsonValu = jsonDecode(response.body);
+        print(" image  Response is ::::::::: " + jsonValu.toString());
+        getImageStream.sink.add(jsonValu['Ads']);
+      }
+    }, onError: (error) {
+      getImageStream.close();
+      print("image Response is :::: $error");
+    });
+  }
 }

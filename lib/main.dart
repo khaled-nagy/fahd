@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
     ConstantVarable.lang = EasyLocalization.of(context).locale.toString() ;
     print("lang is ${ConstantVarable.lang}");
     return MaterialApp(
-      title: 'Elfahd',
+      title: 'Al fahad',
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

@@ -43,6 +43,7 @@
     "_title": "Title",
     "_address": "Address",
     "_message": "Message",
-    "_send": "Send"
+    "_send": "Send",
+    "_chose_area": "Chose Area"
     
 }

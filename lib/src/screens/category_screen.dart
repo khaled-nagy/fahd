@@ -1,5 +1,7 @@
 import 'package:elfhad/ConstantVarables.dart';
+import 'package:elfhad/src/controllers/AddsController.dart';
 import 'package:elfhad/src/controllers/CategoryController.dart';
+import 'package:elfhad/src/data/models/CityMenu.dart';
 import 'package:elfhad/src/data/models/SubSectionModel.dart';
 import 'package:elfhad/src/widgets/AppBarWidget.dart';
 import 'package:elfhad/src/widgets/CategoryCard.dart';
@@ -42,6 +44,9 @@ class CategoryView extends StateMVC<CategoryScreen> {
         });
   }
 
+  CityMenu selectedCityMenu;
+  String dropDownTitleCityMenu = "_chose_area".tr();
+
   @override
   void initState() {
     ConstantVarable.allAddsOrOne = false;
@@ -49,9 +54,13 @@ class CategoryView extends StateMVC<CategoryScreen> {
     print(widget.categoryId);
     categoryController.getSubSections(widget.categoryId);
     categoryController.getAllSubSectionMenuButton(widget.categoryId);
+    AddsController().getAllCities();
+    CategoryController().getImage("2");
 
     super.initState();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,16 +77,41 @@ class CategoryView extends StateMVC<CategoryScreen> {
             Container(
               height: 16,
             ),
+            StreamBuilder(
+                stream: CategoryController().getImageStream.stream,
+                builder: (context , snapshot){
+                  if(snapshot.hasData){
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 150,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            image: DecorationImage(
+                                image: NetworkImage(snapshot.data[0]['Image']),fit: BoxFit.cover)
+                        ),
+                      ),
+                    );
+
+                  }else{
+                    return SharedWidget.loading(context);
+                  }
+                }),
             Container(
               width: MediaQuery.of(context).size.width / 1.1,
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(30)),
+                  color: Colors.black,
+                  border: Border.all(color: Colors.white),
+
+                  borderRadius: BorderRadius.circular(12)),
               child: Row(
                 children: <Widget>[
                   DropdownButton<SubSectionsModel>(
                       hint: Padding(
                         padding: const EdgeInsets.only(left: 8, right: 8),
-                        child: Text(dropDownTitleSubCategory),
+                        child: Text(dropDownTitleSubCategory, style: Theme.of(context).textTheme.caption,),
                       ),
                       underline: Container(),
                       value: selectedSubCategory,
@@ -121,7 +155,83 @@ class CategoryView extends StateMVC<CategoryScreen> {
                           selectedSubCategory = value;
                           dropDownTitleSubCategory = value.name;
                           categoryController
-                              .getSubSectionsBySectionId(value.id);
+                              .getSubSectionsBySectionId(value.id , "");
+                        });
+                      })
+                ],
+              ),
+            ),
+
+            Container(
+              height: 16,
+            ),
+
+            Container(
+              width: MediaQuery.of(context).size.width / 1.1,
+              decoration: BoxDecoration(
+                  color: Colors.black,
+                  border: Border.all(color: Colors.white),
+
+                  borderRadius: BorderRadius.circular(12)),
+              child: Row(
+                children: <Widget>[
+                  DropdownButton<CityMenu>(
+                      hint: Padding(
+                        padding:
+                        const EdgeInsets.only(left: 8, right: 8),
+                        child: Text(dropDownTitleCityMenu , style: Theme.of(context).textTheme.caption,),
+                      ),
+                      underline: Container(),
+                      value: selectedCityMenu,
+                      iconSize: 0,
+                      icon: Padding(
+                        padding: const EdgeInsets.only(right: 0),
+                        child: Image.asset(
+                          "assets/imgs/arrow_down.png",
+                          width: 15,
+                          height: 15,
+                        ),
+                      ),
+                      items: AddsController().cities
+                          .map((CityMenu subCategory) {
+                        return DropdownMenuItem<CityMenu>(
+                            value: subCategory,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8, right: 8),
+                              child: Container(
+                                width:
+                                MediaQuery.of(context).size.width /
+                                    1.3,
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      subCategory.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline,
+                                    ),
+
+                                    Expanded(
+                                      child: Container(),
+                                    ),
+
+                                    // Image.asset("assets/imgs/arrow_down.png" , width: 20,height: 20,)
+                                  ],
+                                ),
+                              ),
+                            ));
+                      }).toList(),
+                      onChanged: (CityMenu value) {
+                        setState(() {
+                          selectedCityMenu = value;
+                          dropDownTitleCityMenu = value.name;
+                          ConstantVarable.cityId = value.id;
+                          categoryController
+                              .getSubSectionsBySectionId(ConstantVarable.sectionId , value.id );
+
                         });
                       })
                 ],

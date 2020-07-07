@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:elfhad/src/data/models/AreaMenu.dart';
 import 'package:elfhad/src/data/models/CityMenu.dart';
 import 'package:elfhad/src/screens/home_screen.dart';
 import 'package:elfhad/src/screens/user_adds_screen.dart';
@@ -203,6 +204,39 @@ if(form.validate()){
     
     refresh();
    }
+  final getAreaStream = StreamController.broadcast();
+  Future<List<AreaMenu>> getAllArea (String cityId ) async {
+
+    return await http.get(
+      "${url}GetSubCity.php?Lang=${ConstantVarable.lang}&CityID=$cityId",
+
+    ).then((response) {
+      if (response.statusCode == 200) {
+        var jsonValue = json.decode(response.body);
+        print("Regions is :::: ${jsonValue['SubCity']}");
+        getAreaStream.sink.add(jsonValue);
+        return (jsonValue['SubCity'] as List)
+            .map((f) => new AreaMenu.fromJson(f))
+            .toList();
+      } else
+        return List<AreaMenu>();
+    },onError: (err){
+      getAreaStream.close();
+      print("Regions error is :::: $err");
+    });
+
+  }
+
+  List<AreaMenu> regions = List<AreaMenu>();
+
+  Future getAllRegions(String cityId) async {
+
+
+    refresh();
+    regions = await getAllArea(cityId);
+
+    refresh();
+  }
 
 
 

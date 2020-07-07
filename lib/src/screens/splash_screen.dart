@@ -43,7 +43,7 @@ if(user.email != null ){
     return Scaffold(
         body: Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          
           image: DecorationImage(
               image: AssetImage("assets/imgs/splash.png"),
               fit: BoxFit.cover)),
